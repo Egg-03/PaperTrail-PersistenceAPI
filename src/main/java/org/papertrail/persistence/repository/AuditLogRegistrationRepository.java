@@ -5,6 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AuditLogRegistrationRepository extends JpaRepository<AuditLogRegistration, Long> {
 
-    boolean existsByChannelId (Long channelId);
-
 }
