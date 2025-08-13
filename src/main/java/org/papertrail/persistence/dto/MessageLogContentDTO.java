@@ -1,6 +1,6 @@
 package org.papertrail.persistence.dto;
 
-public class MessageLogContentDAO {
+public class MessageLogContentDTO {
 
     private long messageId;
     private String messageContent;
