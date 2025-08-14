@@ -4,10 +4,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Table(name = "message_log_registration_table", schema = "public")
 public class MessageLogRegistration {
 
@@ -17,4 +23,5 @@ public class MessageLogRegistration {
 
     @Column (name = "channel_id", unique = true, nullable = false)
     private Long channelId;
+
 }
