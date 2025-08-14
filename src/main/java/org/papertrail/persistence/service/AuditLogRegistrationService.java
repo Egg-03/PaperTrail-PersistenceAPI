@@ -24,8 +24,7 @@ public class AuditLogRegistrationService {
             throw new GuildAlreadyRegisteredException("guild is already registered for audit logging");
         }
 
-        AuditLogRegistration auditLogRegistration = mapper.toEntity(auditLogRegistrationDTO);
-        repository.saveAndFlush(auditLogRegistration);
+        repository.saveAndFlush(mapper.toEntity(auditLogRegistrationDTO));
         return auditLogRegistrationDTO;
     }
 
@@ -35,6 +34,17 @@ public class AuditLogRegistrationService {
                 .orElseThrow(()->new GuildNotFoundException("guild is not registered for audit logging"));
 
         return mapper.toDTO(auditLogRegistration);
+    }
+
+    @Transactional
+    public AuditLogRegistrationDTO updateGuild(AuditLogRegistrationDTO updatedDTO) {
+
+        if(!repository.existsById(updatedDTO.getGuildId())){
+            throw new GuildNotFoundException("guild is not registered for audit logging");
+        }
+
+        repository.save(mapper.toEntity(updatedDTO));
+        return updatedDTO;
     }
 
     @Transactional
