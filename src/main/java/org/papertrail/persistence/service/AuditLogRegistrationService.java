@@ -28,6 +28,7 @@ public class AuditLogRegistrationService {
         return auditLogRegistrationDTO;
     }
 
+    @Transactional (readOnly = true)
     public AuditLogRegistrationDTO findByGuild(Long guildId) {
 
         AuditLogRegistration auditLogRegistration = repository.findById(guildId)

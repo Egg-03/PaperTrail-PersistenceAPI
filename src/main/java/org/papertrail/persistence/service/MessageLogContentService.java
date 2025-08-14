@@ -29,6 +29,7 @@ public class MessageLogContentService {
         return messageLogContentDTO;
     }
 
+    @Transactional (readOnly = true)
     public MessageLogContentDTO findMessageById(Long messageId) {
         MessageLogContent messageLogContent = repository.findById(messageId)
                 .orElseThrow(()-> new MessageNotFoundException("Message hasn't been logged"));

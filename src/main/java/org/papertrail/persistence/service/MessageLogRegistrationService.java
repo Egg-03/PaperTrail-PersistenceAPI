@@ -29,6 +29,7 @@ public class MessageLogRegistrationService {
         return messageLogRegistrationDTO;
     }
 
+    @Transactional (readOnly = true)
     public MessageLogRegistrationDTO findByGuild(Long guildId){
 
         MessageLogRegistration messageLogRegistration = repository.findById(guildId)
@@ -38,11 +39,22 @@ public class MessageLogRegistrationService {
     }
 
     @Transactional
+    public MessageLogRegistrationDTO updateGuild (MessageLogRegistrationDTO updatedDTO) {
+
+        if (!repository.existsById(updatedDTO.getGuildId())) {
+            throw new GuildNotFoundException("guild is not registered for message logging");
+        }
+
+        repository.save(mapper.toEntity(updatedDTO));
+        return updatedDTO;
+    }
+
+    @Transactional
     public void unregisterGuild(Long guildId){
 
         MessageLogRegistration messageLogRegistration = repository.findById(guildId)
                 .orElseThrow(()-> new GuildNotFoundException("guild is not registered for message logging"));
 
-        repository.deleteById(guildId);
+        repository.delete(messageLogRegistration);
     }
 }
