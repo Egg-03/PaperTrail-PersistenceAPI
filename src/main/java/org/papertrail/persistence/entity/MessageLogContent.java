@@ -16,13 +16,13 @@ public class MessageLogContent {
 
     @Id
     @Column(name = "message_id")
-    private long messageId;
+    private Long messageId;
 
     @Column(name = "message_content")
     private String messageContent;
 
     @Column(name = "author_id", nullable = false)
-    private long authorId;
+    private Long authorId;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

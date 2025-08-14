@@ -13,8 +13,8 @@ public class MessageLogRegistration {
 
     @Id
     @Column(name = "guild_id")
-    private long guildId;
+    private Long guildId;
 
     @Column (name = "channel_id", unique = true, nullable = false)
-    private long channelId;
+    private Long channelId;
 }

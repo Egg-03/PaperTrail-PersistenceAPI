@@ -1,11 +1,19 @@
 package org.papertrail.persistence.dto;
 
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
+
 import lombok.Data;
 
 @Data
 public class MessageLogContentDTO {
 
-    private long messageId;
+    @NotNull (message = "MessageID cannot be null")
+    private Long messageId;
+
+    @Nullable
     private String messageContent;
-    private long authorId;
+
+    @NotNull (message = "AuthorID cannot be null")
+    private Long authorId;
 }
