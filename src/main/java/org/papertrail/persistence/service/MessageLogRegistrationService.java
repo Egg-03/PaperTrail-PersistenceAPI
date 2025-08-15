@@ -7,6 +7,9 @@ import org.papertrail.persistence.exceptions.GuildAlreadyRegisteredException;
 import org.papertrail.persistence.exceptions.GuildNotFoundException;
 import org.papertrail.persistence.mapper.MessageLogRegistrationMapper;
 import org.papertrail.persistence.repository.MessageLogRegistrationRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +21,7 @@ public class MessageLogRegistrationService {
     private final MessageLogRegistrationRepository repository;
 
     @Transactional
+    @CachePut(value = "messageLog", key = "#messageLogRegistrationDTO.guildId")
     public MessageLogRegistrationDTO registerGuild(MessageLogRegistrationDTO messageLogRegistrationDTO){
 
         if(repository.existsById(messageLogRegistrationDTO.getGuildId())){
@@ -30,6 +34,7 @@ public class MessageLogRegistrationService {
     }
 
     @Transactional (readOnly = true)
+    @Cacheable(value = "messageLog", key = "#guildId")
     public MessageLogRegistrationDTO findByGuild(Long guildId){
 
         MessageLogRegistration messageLogRegistration = repository.findById(guildId)
@@ -39,6 +44,7 @@ public class MessageLogRegistrationService {
     }
 
     @Transactional
+    @CachePut(value = "messageLog", key = "#updatedDTO.guildId")
     public MessageLogRegistrationDTO updateGuild (MessageLogRegistrationDTO updatedDTO) {
 
         if (!repository.existsById(updatedDTO.getGuildId())) {
@@ -50,6 +56,7 @@ public class MessageLogRegistrationService {
     }
 
     @Transactional
+    @CacheEvict(value = "messageLog", key = "#guildId")
     public void unregisterGuild(Long guildId){
 
         MessageLogRegistration messageLogRegistration = repository.findById(guildId)

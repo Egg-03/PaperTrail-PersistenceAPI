@@ -7,6 +7,9 @@ import org.papertrail.persistence.exceptions.GuildAlreadyRegisteredException;
 import org.papertrail.persistence.exceptions.GuildNotFoundException;
 import org.papertrail.persistence.mapper.AuditLogRegistrationMapper;
 import org.papertrail.persistence.repository.AuditLogRegistrationRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +21,7 @@ public class AuditLogRegistrationService {
     private final AuditLogRegistrationRepository repository;
 
     @Transactional
+    @CachePut(value = "auditLog", key = "#auditLogRegistrationDTO.guildId")
     public AuditLogRegistrationDTO registerGuild(AuditLogRegistrationDTO auditLogRegistrationDTO) {
 
         if (repository.existsById(auditLogRegistrationDTO.getGuildId())){
@@ -29,6 +33,7 @@ public class AuditLogRegistrationService {
     }
 
     @Transactional (readOnly = true)
+    @Cacheable(value = "auditLog", key = "#guildId")
     public AuditLogRegistrationDTO findByGuild(Long guildId) {
 
         AuditLogRegistration auditLogRegistration = repository.findById(guildId)
@@ -38,6 +43,7 @@ public class AuditLogRegistrationService {
     }
 
     @Transactional
+    @CachePut(value = "auditLog", key = "#updatedDTO.guildId")
     public AuditLogRegistrationDTO updateGuild(AuditLogRegistrationDTO updatedDTO) {
 
         if(!repository.existsById(updatedDTO.getGuildId())){
@@ -49,6 +55,7 @@ public class AuditLogRegistrationService {
     }
 
     @Transactional
+    @CacheEvict(value = "auditLog", key = "#guildId")
     public void unregisterGuild (Long guildId) {
 
         AuditLogRegistration auditLogRegistration = repository.findById(guildId)
