@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@Profile({"prod"})
+@Profile({"prod", "dev"})
 public class RedisCacheConfig {
 
     @Bean
