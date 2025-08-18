@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Configuration
 @Profile({"prod"})
-public class CacheConfig {
+public class RedisCacheConfig {
 
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
