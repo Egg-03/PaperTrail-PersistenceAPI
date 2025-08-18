@@ -23,5 +23,5 @@ VOLUME /tmp
 
 # Copy the JAR from the build stage
 COPY --from=build /app/target/persistence-0.0.1-SNAPSHOT.jar persistence-0.0.1-SNAPSHOT.jar
-ENTRYPOINT ["java","-jar","persistence-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-jar","persistence-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=prod"]
 EXPOSE 8081
