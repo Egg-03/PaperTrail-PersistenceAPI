@@ -1,5 +1,6 @@
 package org.papertrail.persistence.exceptions.handler;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.papertrail.persistence.exceptions.GuildAlreadyRegisteredException;
 import org.papertrail.persistence.exceptions.GuildNotFoundException;
 import org.papertrail.persistence.exceptions.MessageAlreadyLoggedException;
@@ -18,58 +19,82 @@ import java.util.Optional;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(GuildNotFoundException.class)
-    public ResponseEntity<ErrorResponse> informGuildNotFound (GuildNotFoundException e) {
+    public ResponseEntity<ErrorResponse> informGuildNotFound (GuildNotFoundException e, HttpServletRequest request) {
 
-        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(),
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                e.getClass().getSimpleName(),
                 e.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @ExceptionHandler(MessageNotFoundException.class)
-    public ResponseEntity<ErrorResponse> informMessageNotFound (MessageNotFoundException e) {
+    public ResponseEntity<ErrorResponse> informMessageNotFound (MessageNotFoundException e, HttpServletRequest request) {
 
-        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(),
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                e.getClass().getSimpleName(),
                 e.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @ExceptionHandler(GuildAlreadyRegisteredException.class)
-    public ResponseEntity<ErrorResponse> informGuildAlreadyRegistered (GuildAlreadyRegisteredException e) {
+    public ResponseEntity<ErrorResponse> informGuildAlreadyRegistered (GuildAlreadyRegisteredException e, HttpServletRequest request) {
 
         ErrorResponse response = new ErrorResponse(
-                HttpStatus.CONFLICT.value(),
+                HttpStatus.NOT_FOUND.value(),
+                e.getClass().getSimpleName(),
                 e.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler(MessageAlreadyLoggedException.class)
-    public ResponseEntity<ErrorResponse> informMessageAlreadyLogged (MessageAlreadyLoggedException e) {
+    public ResponseEntity<ErrorResponse> informMessageAlreadyLogged (MessageAlreadyLoggedException e, HttpServletRequest request) {
 
         ErrorResponse response = new ErrorResponse(
-                HttpStatus.CONFLICT.value(),
+                HttpStatus.NOT_FOUND.value(),
+                e.getClass().getSimpleName(),
                 e.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> informMethodArgumentInvalid (MethodArgumentNotValidException e) {
+    public ResponseEntity<ErrorResponse> informMethodArgumentInvalid (MethodArgumentNotValidException e, HttpServletRequest request) {
 
         ErrorResponse response = new ErrorResponse(
                 e.getStatusCode().value(),
+                e.getClass().getSimpleName(),
                 Optional.ofNullable(e.getFieldError())
                         .map(FieldError::getDefaultMessage)
                         .orElse("Generic Validation Error / Validation Message Not Found"),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                request.getRequestURI()
         );
         return ResponseEntity.status(e.getStatusCode()).body(response);
     }
 
+    // fallback
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGeneric(Exception e, HttpServletRequest request) {
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                e.getClass().getSimpleName(),
+                e.getMessage(),
+                LocalDateTime.now(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
 }
