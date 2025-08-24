@@ -27,7 +27,7 @@ public class MessageLogContentService {
     @CachePut(value = "messageContent", key = "#messageLogContentDTO.messageId")
     public MessageLogContentDTO saveMessage(MessageLogContentDTO messageLogContentDTO){
 
-        log.info("{}Attempting to save message with ID={}", AnsiColor.YELLOW, messageLogContentDTO.getMessageId());
+        log.info("{}Attempting to save message with ID={}{}", AnsiColor.YELLOW, messageLogContentDTO.getMessageId(), AnsiColor.RESET);
 
         if(repository.existsById(messageLogContentDTO.getMessageId())){
             throw new MessageAlreadyLoggedException("Message has already been logged before. A logged message can only be updated or deleted.");
@@ -36,7 +36,7 @@ public class MessageLogContentService {
         MessageLogContent messageLogContent = mapper.toEntity(messageLogContentDTO);
         repository.save(messageLogContent);
 
-        log.info("{}Successfully saved message with ID={}", AnsiColor.GREEN, messageLogContentDTO.getMessageId());
+        log.info("{}Successfully saved message with ID={}{}", AnsiColor.GREEN, messageLogContentDTO.getMessageId(), AnsiColor.RESET);
         return messageLogContentDTO;
     }
 
@@ -44,11 +44,11 @@ public class MessageLogContentService {
     @Cacheable(value = "messageContent", key = "#messageId")
     public MessageLogContentDTO findMessageById(Long messageId) {
 
-        log.info("{}Cache MISS - Fetching message with ID={}", AnsiColor.YELLOW, messageId);
+        log.info("{}Cache MISS - Fetching message with ID={}{}", AnsiColor.YELLOW, messageId, AnsiColor.RESET);
         MessageLogContent messageLogContent = repository.findById(messageId)
                 .orElseThrow(()-> new MessageNotFoundException("Message with the given ID hasn't been logged before"));
 
-        log.info("{}Found message with ID={}", AnsiColor.BLUE, messageId);
+        log.info("{}Found message with ID={}{}", AnsiColor.BLUE, messageId, AnsiColor.RESET);
         return mapper.toDTO(messageLogContent);
     }
 
@@ -56,14 +56,14 @@ public class MessageLogContentService {
     @CachePut(value = "messageContent", key = "#updatedMessage.messageId")
     public MessageLogContentDTO updateMessage(MessageLogContentDTO updatedMessage) {
 
-        log.info("{}Attempting to update message with ID={}", AnsiColor.YELLOW, updatedMessage.getMessageId());
+        log.info("{}Attempting to update message with ID={}{}", AnsiColor.YELLOW, updatedMessage.getMessageId(), AnsiColor.RESET);
         if(!repository.existsById(updatedMessage.getMessageId())){
             throw new MessageNotFoundException("Message with the given ID hasn't been logged before");
         }
 
         MessageLogContent updatedMessageEntity = mapper.toEntity(updatedMessage);
         repository.save(updatedMessageEntity);
-        log.info("{}Successfully updated message with ID={}", AnsiColor.GREEN, updatedMessage.getMessageId());
+        log.info("{}Successfully updated message with ID={}{}", AnsiColor.GREEN, updatedMessage.getMessageId(), AnsiColor.RESET);
         return updatedMessage;
 
     }
@@ -72,12 +72,12 @@ public class MessageLogContentService {
     @CacheEvict(value = "messageContent", key = "#messageId")
     public void deleteMessage(Long messageId) {
 
-        log.info("{}Attempting to delete message with ID={}", AnsiColor.YELLOW, messageId);
+        log.info("{}Attempting to delete message with ID={}{}", AnsiColor.YELLOW, messageId, AnsiColor.RESET);
         if(!repository.existsById(messageId)){
             throw new MessageNotFoundException("Message hasn't been logged or the ID is invalid");
         }
 
         repository.deleteById(messageId);
-        log.info("{}Successfully deleted message with ID={}", AnsiColor.GREEN, messageId);
+        log.info("{}Successfully deleted message with ID={}{}", AnsiColor.GREEN, messageId, AnsiColor.RESET);
     }
 }

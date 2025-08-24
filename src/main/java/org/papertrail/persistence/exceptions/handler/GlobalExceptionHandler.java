@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
-        log.info(AnsiColor.MAGENTA + "{}", e.getMessage());
+        log.info(AnsiColor.MAGENTA + "{}" + AnsiColor.RESET, e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
-        log.info(AnsiColor.MAGENTA + "{}", e.getMessage());
+        log.info(AnsiColor.MAGENTA + "{}" + AnsiColor.RESET, e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
-        log.info(AnsiColor.MAGENTA + "{}", e.getMessage());
+        log.info(AnsiColor.MAGENTA + "{}" + AnsiColor.RESET, e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
-        log.info(AnsiColor.MAGENTA + "{}", e.getMessage());
+        log.info(AnsiColor.MAGENTA + "{}" + AnsiColor.RESET, e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
-        log.warn(AnsiColor.YELLOW+"Input validation failed", e);
+        log.warn(AnsiColor.YELLOW+"Input validation failed"+AnsiColor.RESET, e);
         return ResponseEntity.status(e.getStatusCode()).body(response);
     }
 
@@ -104,7 +104,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
-        log.error(AnsiColor.RED+"An error has occurred", e);
+        log.error(AnsiColor.RED+"An error has occurred"+AnsiColor.RESET, e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
