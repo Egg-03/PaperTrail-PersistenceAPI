@@ -1,6 +1,7 @@
 package org.papertrail.persistence.exceptions.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.papertrail.persistence.exceptions.GuildAlreadyRegisteredException;
 import org.papertrail.persistence.exceptions.GuildNotFoundException;
 import org.papertrail.persistence.exceptions.MessageAlreadyLoggedException;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(GuildNotFoundException.class)
@@ -28,6 +30,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
+        log.info(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
@@ -41,6 +44,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
+        log.info(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
@@ -48,12 +52,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> informGuildAlreadyRegistered (GuildAlreadyRegisteredException e, HttpServletRequest request) {
 
         ErrorResponse response = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.CONFLICT.value(),
                 e.getClass().getSimpleName(),
                 e.getMessage(),
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
+        log.info(e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
@@ -61,12 +66,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> informMessageAlreadyLogged (MessageAlreadyLoggedException e, HttpServletRequest request) {
 
         ErrorResponse response = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.CONFLICT.value(),
                 e.getClass().getSimpleName(),
                 e.getMessage(),
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
+        log.info(e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
@@ -82,6 +88,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
+        log.warn("Input validation failed", e);
         return ResponseEntity.status(e.getStatusCode()).body(response);
     }
 
@@ -95,6 +102,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
+        log.error("An error has occurred", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

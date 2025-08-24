@@ -1,6 +1,7 @@
 package org.papertrail.persistence.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.papertrail.persistence.dto.MessageLogRegistrationDTO;
 import org.papertrail.persistence.entity.MessageLogRegistration;
 import org.papertrail.persistence.exceptions.GuildAlreadyRegisteredException;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MessageLogRegistrationService {
 
     private final MessageLogRegistrationMapper mapper;
@@ -24,12 +26,14 @@ public class MessageLogRegistrationService {
     @CachePut(value = "messageLog", key = "#messageLogRegistrationDTO.guildId")
     public MessageLogRegistrationDTO registerGuild(MessageLogRegistrationDTO messageLogRegistrationDTO){
 
+        log.info("Attempting to register message log guild with ID={}", messageLogRegistrationDTO.getGuildId());
         if(repository.existsById(messageLogRegistrationDTO.getGuildId())){
-            throw new GuildAlreadyRegisteredException("guild already registered for message logging");
+            throw new GuildAlreadyRegisteredException("Guild already registered for message logging");
         }
 
         MessageLogRegistration messageLogRegistration = mapper.toEntity(messageLogRegistrationDTO);
         repository.saveAndFlush(messageLogRegistration);
+        log.info("Successfully registered message log guild with ID={}", messageLogRegistrationDTO.getGuildId());
         return messageLogRegistrationDTO;
     }
 
@@ -37,9 +41,11 @@ public class MessageLogRegistrationService {
     @Cacheable(value = "messageLog", key = "#guildId")
     public MessageLogRegistrationDTO findByGuild(Long guildId){
 
+        log.info("Fetching message log guild with ID={}", guildId);
         MessageLogRegistration messageLogRegistration = repository.findById(guildId)
-                .orElseThrow(()-> new GuildNotFoundException("guild is not registered for message logging"));
+                .orElseThrow(()-> new GuildNotFoundException("Guild is not registered for message logging"));
 
+        log.info("Found message log guild with ID={}", guildId);
         return mapper.toDTO(messageLogRegistration);
     }
 
@@ -47,11 +53,13 @@ public class MessageLogRegistrationService {
     @CachePut(value = "messageLog", key = "#updatedDTO.guildId")
     public MessageLogRegistrationDTO updateGuild (MessageLogRegistrationDTO updatedDTO) {
 
+        log.info("Attempting to update message log guild with ID={}", updatedDTO.getGuildId());
         if (!repository.existsById(updatedDTO.getGuildId())) {
-            throw new GuildNotFoundException("guild is not registered for message logging");
+            throw new GuildNotFoundException("Guild is not registered for message logging");
         }
 
         repository.save(mapper.toEntity(updatedDTO));
+        log.info("Successfully updated message log guild with ID={}", updatedDTO.getGuildId());
         return updatedDTO;
     }
 
@@ -59,9 +67,11 @@ public class MessageLogRegistrationService {
     @CacheEvict(value = "messageLog", key = "#guildId")
     public void unregisterGuild(Long guildId){
 
+        log.info("Attempting to unregister message log guild with ID={}", guildId);
         MessageLogRegistration messageLogRegistration = repository.findById(guildId)
-                .orElseThrow(()-> new GuildNotFoundException("guild is not registered for message logging"));
+                .orElseThrow(()-> new GuildNotFoundException("Guild is not registered for message logging"));
 
         repository.delete(messageLogRegistration);
+        log.info("Successfully unregistered message log guild with ID={}", guildId);
     }
 }

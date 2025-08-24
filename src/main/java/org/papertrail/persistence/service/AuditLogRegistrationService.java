@@ -1,6 +1,7 @@
 package org.papertrail.persistence.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.papertrail.persistence.dto.AuditLogRegistrationDTO;
 import org.papertrail.persistence.entity.AuditLogRegistration;
 import org.papertrail.persistence.exceptions.GuildAlreadyRegisteredException;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuditLogRegistrationService {
 
     private final AuditLogRegistrationMapper mapper;
@@ -24,11 +26,14 @@ public class AuditLogRegistrationService {
     @CachePut(value = "auditLog", key = "#auditLogRegistrationDTO.guildId")
     public AuditLogRegistrationDTO registerGuild(AuditLogRegistrationDTO auditLogRegistrationDTO) {
 
+        log.info("Attempting to register audit log guild with ID={}", auditLogRegistrationDTO.getGuildId());
+
         if (repository.existsById(auditLogRegistrationDTO.getGuildId())){
-            throw new GuildAlreadyRegisteredException("guild is already registered for audit logging");
+            throw new GuildAlreadyRegisteredException("Guild is already registered for audit logging");
         }
 
         repository.saveAndFlush(mapper.toEntity(auditLogRegistrationDTO));
+        log.info("Successfully registered audit log guild with ID={}", auditLogRegistrationDTO.getGuildId());
         return auditLogRegistrationDTO;
     }
 
@@ -36,9 +41,13 @@ public class AuditLogRegistrationService {
     @Cacheable(value = "auditLog", key = "#guildId")
     public AuditLogRegistrationDTO findByGuild(Long guildId) {
 
+        log.info("Fetching audit log guild with ID {}", guildId);
         AuditLogRegistration auditLogRegistration = repository.findById(guildId)
-                .orElseThrow(()->new GuildNotFoundException("guild is not registered for audit logging"));
+                .orElseThrow(()->
+                        new GuildNotFoundException("Guild is not registered for audit logging")
+                );
 
+        log.info("Found audit log guild with ID={}", guildId);
         return mapper.toDTO(auditLogRegistration);
     }
 
@@ -46,11 +55,14 @@ public class AuditLogRegistrationService {
     @CachePut(value = "auditLog", key = "#updatedDTO.guildId")
     public AuditLogRegistrationDTO updateGuild(AuditLogRegistrationDTO updatedDTO) {
 
+        log.info("Attempting to update audit log guild with ID={}", updatedDTO.getGuildId());
+
         if(!repository.existsById(updatedDTO.getGuildId())){
-            throw new GuildNotFoundException("guild is not registered for audit logging");
+            throw new GuildNotFoundException("Guild is not registered for audit logging");
         }
 
         repository.save(mapper.toEntity(updatedDTO));
+        log.info("Successfully updated audit log guild with ID={}", updatedDTO.getGuildId());
         return updatedDTO;
     }
 
@@ -58,9 +70,14 @@ public class AuditLogRegistrationService {
     @CacheEvict(value = "auditLog", key = "#guildId")
     public void unregisterGuild (Long guildId) {
 
+        log.info("Attempting to unregister audit log guild with ID={}", guildId);
+
         AuditLogRegistration auditLogRegistration = repository.findById(guildId)
-                .orElseThrow(()->new GuildNotFoundException("guild is not registered for audit logging"));
+                .orElseThrow(()->
+                    new GuildNotFoundException("Guild is not registered for audit logging")
+                );
 
         repository.delete(auditLogRegistration);
+        log.info("Successfully unregistered audit log guild with ID={}", guildId);
     }
 }
