@@ -8,6 +8,7 @@ import org.papertrail.persistence.exceptions.GuildAlreadyRegisteredException;
 import org.papertrail.persistence.exceptions.GuildNotFoundException;
 import org.papertrail.persistence.mapper.MessageLogRegistrationMapper;
 import org.papertrail.persistence.repository.MessageLogRegistrationRepository;
+import org.papertrail.persistence.util.AnsiColor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,14 +27,14 @@ public class MessageLogRegistrationService {
     @CachePut(value = "messageLog", key = "#messageLogRegistrationDTO.guildId")
     public MessageLogRegistrationDTO registerGuild(MessageLogRegistrationDTO messageLogRegistrationDTO){
 
-        log.info("Attempting to register message log guild with ID={}", messageLogRegistrationDTO.getGuildId());
+        log.info("{}Attempting to register message log guild with ID={}", AnsiColor.YELLOW, messageLogRegistrationDTO.getGuildId());
         if(repository.existsById(messageLogRegistrationDTO.getGuildId())){
             throw new GuildAlreadyRegisteredException("Guild already registered for message logging");
         }
 
         MessageLogRegistration messageLogRegistration = mapper.toEntity(messageLogRegistrationDTO);
         repository.saveAndFlush(messageLogRegistration);
-        log.info("Successfully registered message log guild with ID={}", messageLogRegistrationDTO.getGuildId());
+        log.info("{}Successfully registered message log guild with ID={}", AnsiColor.GREEN, messageLogRegistrationDTO.getGuildId());
         return messageLogRegistrationDTO;
     }
 
@@ -41,11 +42,11 @@ public class MessageLogRegistrationService {
     @Cacheable(value = "messageLog", key = "#guildId")
     public MessageLogRegistrationDTO findByGuild(Long guildId){
 
-        log.info("Cache MISS - Fetching message log guild with ID={}", guildId);
+        log.info("{}Cache MISS - Fetching message log guild with ID={}", AnsiColor.YELLOW, guildId);
         MessageLogRegistration messageLogRegistration = repository.findById(guildId)
                 .orElseThrow(()-> new GuildNotFoundException("Guild is not registered for message logging"));
 
-        log.info("Found message log guild with ID={}", guildId);
+        log.info("{}Found message log guild with ID={}", AnsiColor.BLUE, guildId);
         return mapper.toDTO(messageLogRegistration);
     }
 
@@ -53,13 +54,13 @@ public class MessageLogRegistrationService {
     @CachePut(value = "messageLog", key = "#updatedDTO.guildId")
     public MessageLogRegistrationDTO updateGuild (MessageLogRegistrationDTO updatedDTO) {
 
-        log.info("Attempting to update message log guild with ID={}", updatedDTO.getGuildId());
+        log.info("{}Attempting to update message log guild with ID={}", AnsiColor.YELLOW, updatedDTO.getGuildId());
         if (!repository.existsById(updatedDTO.getGuildId())) {
             throw new GuildNotFoundException("Guild is not registered for message logging");
         }
 
         repository.save(mapper.toEntity(updatedDTO));
-        log.info("Successfully updated message log guild with ID={}", updatedDTO.getGuildId());
+        log.info("{}Successfully updated message log guild with ID={}", AnsiColor.GREEN, updatedDTO.getGuildId());
         return updatedDTO;
     }
 
@@ -67,11 +68,11 @@ public class MessageLogRegistrationService {
     @CacheEvict(value = "messageLog", key = "#guildId")
     public void unregisterGuild(Long guildId){
 
-        log.info("Attempting to unregister message log guild with ID={}", guildId);
+        log.info("{}Attempting to unregister message log guild with ID={}", AnsiColor.YELLOW, guildId);
         MessageLogRegistration messageLogRegistration = repository.findById(guildId)
                 .orElseThrow(()-> new GuildNotFoundException("Guild is not registered for message logging"));
 
         repository.delete(messageLogRegistration);
-        log.info("Successfully unregistered message log guild with ID={}", guildId);
+        log.info("{}Successfully unregistered message log guild with ID={}", AnsiColor.GREEN, guildId);
     }
 }

@@ -6,6 +6,7 @@ import org.papertrail.persistence.exceptions.GuildAlreadyRegisteredException;
 import org.papertrail.persistence.exceptions.GuildNotFoundException;
 import org.papertrail.persistence.exceptions.MessageAlreadyLoggedException;
 import org.papertrail.persistence.exceptions.MessageNotFoundException;
+import org.papertrail.persistence.util.AnsiColor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@SuppressWarnings("LoggingSimilarMessage")
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
@@ -30,7 +32,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
-        log.info(e.getMessage());
+        log.info(AnsiColor.MAGENTA + "{}", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
@@ -44,7 +46,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
-        log.info(e.getMessage());
+        log.info(AnsiColor.MAGENTA + "{}", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
@@ -58,7 +60,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
-        log.info(e.getMessage());
+        log.info(AnsiColor.MAGENTA + "{}", e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
@@ -72,7 +74,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
-        log.info(e.getMessage());
+        log.info(AnsiColor.MAGENTA + "{}", e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
@@ -88,7 +90,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
-        log.warn("Input validation failed", e);
+        log.warn(AnsiColor.YELLOW+"Input validation failed", e);
         return ResponseEntity.status(e.getStatusCode()).body(response);
     }
 
@@ -102,7 +104,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
-        log.error("An error has occurred", e);
+        log.error(AnsiColor.RED+"An error has occurred", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
