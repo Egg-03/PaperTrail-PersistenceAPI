@@ -41,7 +41,7 @@ public class MessageLogRegistrationService {
     @Cacheable(value = "messageLog", key = "#guildId")
     public MessageLogRegistrationDTO findByGuild(Long guildId){
 
-        log.info("Fetching message log guild with ID={}", guildId);
+        log.info("Cache MISS - Fetching message log guild with ID={}", guildId);
         MessageLogRegistration messageLogRegistration = repository.findById(guildId)
                 .orElseThrow(()-> new GuildNotFoundException("Guild is not registered for message logging"));
 

@@ -43,7 +43,7 @@ public class MessageLogContentService {
     @Cacheable(value = "messageContent", key = "#messageId")
     public MessageLogContentDTO findMessageById(Long messageId) {
 
-        log.info("Fetching message with ID={}", messageId);
+        log.info("Cache MISS - Fetching message with ID={}", messageId);
         MessageLogContent messageLogContent = repository.findById(messageId)
                 .orElseThrow(()-> new MessageNotFoundException("Message with the given ID hasn't been logged before"));
 

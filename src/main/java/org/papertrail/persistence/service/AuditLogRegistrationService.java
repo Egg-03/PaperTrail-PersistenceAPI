@@ -41,7 +41,7 @@ public class AuditLogRegistrationService {
     @Cacheable(value = "auditLog", key = "#guildId")
     public AuditLogRegistrationDTO findByGuild(Long guildId) {
 
-        log.info("Fetching audit log guild with ID {}", guildId);
+        log.info("Cache MISS - Fetching audit log guild with ID {}", guildId);
         AuditLogRegistration auditLogRegistration = repository.findById(guildId)
                 .orElseThrow(()->
                         new GuildNotFoundException("Guild is not registered for audit logging")

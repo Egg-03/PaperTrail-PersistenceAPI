@@ -30,7 +30,7 @@ public class RedisCacheConfig {
         Map<String, RedisCacheConfiguration> perCacheConfig = new HashMap<>();
         perCacheConfig.put("auditLog", config.entryTtl(Duration.ofDays(30)));
         perCacheConfig.put("messageLog", config.entryTtl(Duration.ofDays(30)));
-        perCacheConfig.put("messageContent", config.entryTtl(Duration.ofMinutes(15)));
+        perCacheConfig.put("messageContent", config.entryTtl(Duration.ofMinutes(60)));
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(config)
