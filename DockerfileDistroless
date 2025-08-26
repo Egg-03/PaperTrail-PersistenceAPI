@@ -1,5 +1,5 @@
 # Stage 1: Build GraalVM native image
-FROM ghcr.io/graalvm/native-image:java21 AS build
+FROM ghcr.io/graalvm/native-image:22.3.2-java21 AS build
 WORKDIR /app
 
 # Copy Maven wrapper and POM
