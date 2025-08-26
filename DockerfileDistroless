@@ -13,7 +13,7 @@ RUN ./mvnw dependency:go-offline
 COPY src ./src
 
 # Build native image using Spring Boot native profile
-RUN ./mvnw -Pnative clean package
+RUN ./mvnw -Pnative clean package -DskipTests
 
 # Stage 2: Runtime image (minimal)
 FROM gcr.io/distroless/base-debian11 AS runtime
