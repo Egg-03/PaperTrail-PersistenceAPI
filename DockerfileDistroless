@@ -13,7 +13,8 @@ RUN ./mvnw dependency:go-offline
 
 # Build native image using Spring Boot native profile
 RUN ./mvnw -Pnative clean package -DskipTests
-RUN chmod +x target/*-runner  # make executable here
+# Only make executable if file exists
+RUN test -f target/*-runner && chmod +x target/*-runner || echo "No runner file found"
 
 # Stage 2: Minimal runtime image
 FROM gcr.io/distroless/base-debian11 AS runtime
