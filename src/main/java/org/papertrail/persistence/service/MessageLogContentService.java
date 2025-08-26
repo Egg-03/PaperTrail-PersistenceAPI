@@ -12,10 +12,6 @@ import org.papertrail.persistence.util.AnsiColor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.retry.RetryContext;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
-import org.springframework.retry.support.RetrySynchronizationManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,14 +52,9 @@ public class MessageLogContentService {
         return mapper.toDTO(messageLogContent);
     }
 
-    @Retryable(retryFor = MessageNotFoundException.class, maxAttempts = 2, backoff = @Backoff(delay = 5000, multiplier = 2))
+    @Transactional
     @CachePut(value = "messageContent", key = "#updatedMessage.messageId")
     public MessageLogContentDTO updateMessage(MessageLogContentDTO updatedMessage) {
-
-        RetryContext ctx = RetrySynchronizationManager.getContext();
-        if (ctx != null) {
-            log.warn("Message update retry attempt #{} for message ID={}", ctx.getRetryCount() + 1, updatedMessage.getMessageId());
-        }
 
         log.info("{}Attempting to update message with ID={}{}", AnsiColor.YELLOW, updatedMessage.getMessageId(), AnsiColor.RESET);
         if(!repository.existsById(updatedMessage.getMessageId())){
