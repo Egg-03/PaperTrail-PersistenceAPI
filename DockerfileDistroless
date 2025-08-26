@@ -1,0 +1,28 @@
+# Stage 1: Build GraalVM native image
+FROM ghcr.io/graalvm/native-image:java21 AS build
+WORKDIR /app
+
+# Copy Maven wrapper and POM
+COPY pom.xml . 
+COPY mvnw . 
+COPY .mvn .mvn
+RUN chmod +x ./mvnw
+RUN ./mvnw dependency:go-offline
+
+# Copy source files
+COPY src ./src
+
+# Build native image using Spring Boot native profile
+RUN ./mvnw -Pnative clean package
+
+# Stage 2: Runtime image (minimal)
+FROM gcr.io/distroless/base-debian11 AS runtime
+WORKDIR /app
+VOLUME /tmp
+
+# Copy native binary from build stage
+COPY --from=build /app/target/persistence /app/persistence
+
+# Expose port and run binary
+EXPOSE 8081
+ENTRYPOINT ["/app/persistence"]
