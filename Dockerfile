@@ -23,5 +23,5 @@ VOLUME /tmp
 
 # Copy the JAR from the build stage
 COPY --from=build /app/target/persistence-0.0.1-SNAPSHOT.jar persistence-0.0.1-SNAPSHOT.jar
-ENTRYPOINT ["java", "-Xgcpolicy=metronome", "-Xgc:targetUtilization=80", "-Xgc:targetPauseTime=10", "-XX:+IdleTuningGcOnIdle", "-Xshareclasses:name=persistenceCache,cacheDir=/opt/openj9cache,nonfatal,verbose", "-jar", "/app/persistence-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=prod"]
+ENTRYPOINT ["java", "-Xgcpolicy=metronome", "-Xgc:targetUtilization=80", "-Xgc:targetPauseTime=10", "-XX:+IdleTuningGcOnIdle", "-jar", "/app/persistence-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=prod"]
 EXPOSE 8081
