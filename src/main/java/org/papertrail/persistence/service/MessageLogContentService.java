@@ -57,7 +57,6 @@ public class MessageLogContentService {
     }
 
     @Retryable(retryFor = MessageNotFoundException.class, maxAttempts = 2, backoff = @Backoff(delay = 5000, multiplier = 2))
-    @Transactional
     @CachePut(value = "messageContent", key = "#updatedMessage.messageId")
     public MessageLogContentDTO updateMessage(MessageLogContentDTO updatedMessage) {
 
