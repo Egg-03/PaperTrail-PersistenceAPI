@@ -27,3 +27,4 @@ COPY --from=build /app/target/*-runner /app/persistence
 # Expose port and run
 EXPOSE 8081
 ENTRYPOINT ["/app/persistence", "--spring.profiles.active=prod"]
+CMD ["--spring.profiles.active=prod"]
