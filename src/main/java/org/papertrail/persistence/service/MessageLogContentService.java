@@ -1,6 +1,7 @@
 package org.papertrail.persistence.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.papertrail.persistence.dto.MessageLogContentDTO;
 import org.papertrail.persistence.entity.MessageLogContent;
@@ -9,10 +10,14 @@ import org.papertrail.persistence.exceptions.MessageNotFoundException;
 import org.papertrail.persistence.mapper.MessageLogContentMapper;
 import org.papertrail.persistence.repository.MessageLogContentRepository;
 import org.papertrail.persistence.util.AnsiColor;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -22,10 +27,71 @@ public class MessageLogContentService {
 
     private final MessageLogContentMapper mapper;
     private final MessageLogContentRepository repository;
+    private final RedissonClient redissonClient;
+
+    private final ObjectProvider<MessageLogContentService> selfProvider;
+
+    private MessageLogContentService self() {
+        return selfProvider.getIfAvailable();
+    }
+
+    @SneakyThrows
+    public MessageLogContentDTO saveMessage(MessageLogContentDTO messageLogContentDTO){
+        RLock lock = redissonClient.getFairLock(String.valueOf(messageLogContentDTO.getMessageId()));
+
+        lock.lock();
+        log.info("Acquired SAVE lock for messageID {} with active lock count {}", lock.getName(), lock.getHoldCount());
+
+        try {
+            return self().doSaveMessage(messageLogContentDTO);
+        } finally {
+            lock.unlock();
+            log.info("Released SAVE lock for messageID {} with active lock count {}", lock.getName(), lock.getHoldCount());
+        }
+    }
+
+    public MessageLogContentDTO findMessageById(Long messageId) {
+        RLock lock = redissonClient.getFairLock(String.valueOf(messageId));
+        lock.lock();
+        log.info("Acquired READ lock for messageID {} with active lock count {}", lock.getName(), lock.getHoldCount());
+
+        try {
+            return self().doFindMessageById(messageId);
+        } finally {
+            lock.unlock();
+            log.info("Released READ lock for messageID {} with active lock count {}", lock.getName(), lock.getHoldCount());
+        }
+    }
+
+    public MessageLogContentDTO updateMessage(MessageLogContentDTO updatedMessage) {
+        RLock lock = redissonClient.getFairLock(String.valueOf(updatedMessage.getMessageId()));
+        lock.lock();
+        log.info("Acquired UPDATE lock for messageID {} with active lock count {}", lock.getName(), lock.getHoldCount());
+
+        try {
+            return self().doUpdateMessage(updatedMessage);
+        } finally {
+            lock.unlock();
+            log.info("Released UPDATE lock for messageID {} with active lock count {}", lock.getName(), lock.getHoldCount());
+        }
+    }
+
+    public void deleteMessage(Long messageId) {
+        RLock lock = redissonClient.getFairLock(String.valueOf(messageId));
+        lock.lock();
+        log.info("Acquired DELETE lock for messageID {} with active lock count {}", lock.getName(), lock.getHoldCount());
+
+        try {
+            self().doDeleteMessage(messageId);
+        } finally {
+            lock.unlock();
+            log.info("Released DELETE lock for messageID {} with active lock count {}", lock.getName(), lock.getHoldCount());
+        }
+    }
 
     @Transactional
     @CachePut(value = "messageContent", key = "#messageLogContentDTO.messageId")
-    public MessageLogContentDTO saveMessage(MessageLogContentDTO messageLogContentDTO){
+    public MessageLogContentDTO doSaveMessage(MessageLogContentDTO messageLogContentDTO) {
 
         log.info("{}Attempting to save message with ID={}{}", AnsiColor.YELLOW, messageLogContentDTO.getMessageId(), AnsiColor.RESET);
 
@@ -34,7 +100,7 @@ public class MessageLogContentService {
         }
 
         MessageLogContent messageLogContent = mapper.toEntity(messageLogContentDTO);
-        repository.save(messageLogContent);
+        repository.saveAndFlush(messageLogContent);
 
         log.info("{}Successfully saved message with ID={}{}", AnsiColor.GREEN, messageLogContentDTO.getMessageId(), AnsiColor.RESET);
         return messageLogContentDTO;
@@ -42,7 +108,7 @@ public class MessageLogContentService {
 
     @Transactional (readOnly = true)
     @Cacheable(value = "messageContent", key = "#messageId")
-    public MessageLogContentDTO findMessageById(Long messageId) {
+    public MessageLogContentDTO doFindMessageById(Long messageId) {
 
         log.info("{}Cache MISS - Fetching message with ID={}{}", AnsiColor.YELLOW, messageId, AnsiColor.RESET);
         MessageLogContent messageLogContent = repository.findById(messageId)
@@ -54,7 +120,7 @@ public class MessageLogContentService {
 
     @Transactional
     @CachePut(value = "messageContent", key = "#updatedMessage.messageId")
-    public MessageLogContentDTO updateMessage(MessageLogContentDTO updatedMessage) {
+    protected MessageLogContentDTO doUpdateMessage(MessageLogContentDTO updatedMessage) {
 
         log.info("{}Attempting to update message with ID={}{}", AnsiColor.YELLOW, updatedMessage.getMessageId(), AnsiColor.RESET);
         if(!repository.existsById(updatedMessage.getMessageId())){
@@ -62,7 +128,7 @@ public class MessageLogContentService {
         }
 
         MessageLogContent updatedMessageEntity = mapper.toEntity(updatedMessage);
-        repository.save(updatedMessageEntity);
+        repository.saveAndFlush(updatedMessageEntity);
         log.info("{}Successfully updated message with ID={}{}", AnsiColor.GREEN, updatedMessage.getMessageId(), AnsiColor.RESET);
         return updatedMessage;
 
@@ -70,7 +136,7 @@ public class MessageLogContentService {
 
     @Transactional
     @CacheEvict(value = "messageContent", key = "#messageId")
-    public void deleteMessage(Long messageId) {
+    protected void doDeleteMessage(Long messageId) {
 
         log.info("{}Attempting to delete message with ID={}{}", AnsiColor.YELLOW, messageId, AnsiColor.RESET);
         if(!repository.existsById(messageId)){
