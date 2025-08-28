@@ -1,7 +1,6 @@
 package org.papertrail.persistence.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.papertrail.persistence.dto.MessageLogContentDTO;
 import org.papertrail.persistence.entity.MessageLogContent;
@@ -17,7 +16,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -35,7 +33,6 @@ public class MessageLogContentService {
         return selfProvider.getIfAvailable();
     }
 
-    @SneakyThrows
     public MessageLogContentDTO saveMessage(MessageLogContentDTO messageLogContentDTO){
         RLock lock = redissonClient.getFairLock(String.valueOf(messageLogContentDTO.getMessageId()));
 
