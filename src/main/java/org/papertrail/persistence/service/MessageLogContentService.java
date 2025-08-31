@@ -88,7 +88,7 @@ public class MessageLogContentService {
 
     @Transactional
     @CachePut(value = "messageContent", key = "#messageLogContentDTO.messageId")
-    public MessageLogContentDTO doSaveMessage(MessageLogContentDTO messageLogContentDTO) {
+    protected MessageLogContentDTO doSaveMessage(MessageLogContentDTO messageLogContentDTO) {
 
         log.info("{}Attempting to save message with ID={}{}", AnsiColor.YELLOW, messageLogContentDTO.getMessageId(), AnsiColor.RESET);
 
@@ -105,7 +105,7 @@ public class MessageLogContentService {
 
     @Transactional (readOnly = true)
     @Cacheable(value = "messageContent", key = "#messageId")
-    public MessageLogContentDTO doFindMessageById(Long messageId) {
+    protected MessageLogContentDTO doFindMessageById(Long messageId) {
 
         log.info("{}Cache MISS - Fetching message with ID={}{}", AnsiColor.YELLOW, messageId, AnsiColor.RESET);
         MessageLogContent messageLogContent = repository.findById(messageId)
