@@ -48,5 +48,8 @@ jobs:
           java-version: 21
           cache: maven
 
+      - name: Make mvnw script executable
+        run: chmod +x ./mvnw
+        
       - name: Verify Build
         run: ./mvnw clean verify
