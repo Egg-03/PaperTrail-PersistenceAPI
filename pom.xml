@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.papertrail</groupId>
 	<artifactId>persistence</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>persistence</name>
 	<description>Persistence Service for PaperTrail</description>
 	<url/>
@@ -108,10 +108,17 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.codemonstur</groupId>
+            <artifactId>embedded-redis</artifactId>
+            <version>1.4.3</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
 	<build>
+        <finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
