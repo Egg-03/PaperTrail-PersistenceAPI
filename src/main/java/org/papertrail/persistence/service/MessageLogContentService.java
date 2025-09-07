@@ -88,7 +88,7 @@ public class MessageLogContentService {
 
     @Transactional
     @CachePut(value = "messageContent", key = "#messageLogContentDTO.messageId")
-    protected MessageLogContentDTO doSaveMessage(MessageLogContentDTO messageLogContentDTO) {
+    public MessageLogContentDTO doSaveMessage(MessageLogContentDTO messageLogContentDTO) {
 
         log.info("{}Attempting to save message with ID={}{}", AnsiColor.YELLOW, messageLogContentDTO.getMessageId(), AnsiColor.RESET);
 
@@ -105,7 +105,7 @@ public class MessageLogContentService {
 
     @Transactional (readOnly = true)
     @Cacheable(value = "messageContent", key = "#messageId")
-    protected MessageLogContentDTO doFindMessageById(Long messageId) {
+    public MessageLogContentDTO doFindMessageById(Long messageId) {
 
         log.info("{}Cache MISS - Fetching message with ID={}{}", AnsiColor.YELLOW, messageId, AnsiColor.RESET);
         MessageLogContent messageLogContent = repository.findById(messageId)
@@ -117,7 +117,7 @@ public class MessageLogContentService {
 
     @Transactional
     @CachePut(value = "messageContent", key = "#updatedMessage.messageId")
-    protected MessageLogContentDTO doUpdateMessage(MessageLogContentDTO updatedMessage) {
+    public MessageLogContentDTO doUpdateMessage(MessageLogContentDTO updatedMessage) {
 
         log.info("{}Attempting to update message with ID={}{}", AnsiColor.YELLOW, updatedMessage.getMessageId(), AnsiColor.RESET);
         if(!repository.existsById(updatedMessage.getMessageId())){
@@ -133,7 +133,7 @@ public class MessageLogContentService {
 
     @Transactional
     @CacheEvict(value = "messageContent", key = "#messageId")
-    protected void doDeleteMessage(Long messageId) {
+    public void doDeleteMessage(Long messageId) {
 
         log.info("{}Attempting to delete message with ID={}{}", AnsiColor.YELLOW, messageId, AnsiColor.RESET);
         if(!repository.existsById(messageId)){
