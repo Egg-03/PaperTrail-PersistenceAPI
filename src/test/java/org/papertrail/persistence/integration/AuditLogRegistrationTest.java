@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureWebTestClient
 @ActiveProfiles("dev")
 @Slf4j
-class AuditLogTest {
+class AuditLogRegistrationTest {
 
     @Autowired
     private WebTestClient client;
