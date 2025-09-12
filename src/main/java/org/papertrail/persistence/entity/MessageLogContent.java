@@ -23,7 +23,7 @@ public class MessageLogContent {
     @Column(name = "message_id")
     private Long messageId;
 
-    @Column(name = "message_content")
+    @Column(name = "message_content", length = 4000)
     private String messageContent;
 
     @Column(name = "author_id", nullable = false)
