@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.info.License;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @OpenAPIDefinition(
         info = @Info(
@@ -19,6 +20,7 @@ import org.springframework.cache.annotation.EnableCaching;
 )
 @SpringBootApplication
 @EnableCaching
+@EnableScheduling
 public class PersistenceApplication {
 
 	public static void main(String[] args) {
