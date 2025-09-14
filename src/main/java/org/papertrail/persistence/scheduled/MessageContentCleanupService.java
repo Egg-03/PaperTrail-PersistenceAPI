@@ -20,7 +20,7 @@ public class MessageContentCleanupService {
     @Scheduled(cron = "0 0 0 * * ?")
     public void cleanupOldMessages() {
         OffsetDateTime cutoff = OffsetDateTime.now().minusDays(30);
-        repository.deleteOlderThan(cutoff);
-        log.info("{}Cleaned up messages older than {}{}", AnsiColor.GREEN, cutoff, AnsiColor.RESET);
+        int deletedMessageCount = repository.deleteOlderThan(cutoff);
+        log.info("{}Cleaned up {} messages older than {}{}", AnsiColor.GREEN, deletedMessageCount, cutoff, AnsiColor.RESET);
     }
 }

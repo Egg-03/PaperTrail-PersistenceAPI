@@ -13,6 +13,6 @@ public interface MessageLogContentRepository extends JpaRepository<MessageLogCon
     @Modifying
     @Transactional
     @Query("DELETE FROM MessageLogContent m WHERE m.createdAt < :cutoff")
-    void deleteOlderThan(OffsetDateTime cutoff);
+    int deleteOlderThan(OffsetDateTime cutoff);
 
 }
