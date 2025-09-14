@@ -21,6 +21,6 @@ public class MessageContentCleanupService {
     public void cleanupOldMessages() {
         OffsetDateTime cutoff = OffsetDateTime.now().minusDays(30);
         int deletedMessageCount = repository.deleteOlderThan(cutoff);
-        log.info("{}Cleaned up {} messages older than {}{}", AnsiColor.GREEN, deletedMessageCount, cutoff, AnsiColor.RESET);
+        log.info("{}Message Content Cleanup Service- Cleaned up {} messages older than {}{}", AnsiColor.GREEN, deletedMessageCount, cutoff, AnsiColor.RESET);
     }
 }
