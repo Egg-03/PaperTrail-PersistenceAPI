@@ -13,6 +13,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -92,6 +93,20 @@ public class GlobalExceptionHandler {
         );
         log.warn(AnsiColor.YELLOW+"Input validation failed"+AnsiColor.RESET, e);
         return ResponseEntity.status(e.getStatusCode()).body(response);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> informMethodArgumentInvalid (MethodArgumentTypeMismatchException e, HttpServletRequest request) {
+
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                e.getClass().getSimpleName(),
+                e.getMessage(),
+                LocalDateTime.now(),
+                request.getRequestURI()
+        );
+        log.warn(AnsiColor.YELLOW+"Input validation failed"+AnsiColor.RESET, e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     // fallback

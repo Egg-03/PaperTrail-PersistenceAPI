@@ -103,6 +103,26 @@ class AuditLogRegistrationTest {
     }
 
     @Test
+    void registerGuild_malformed_throwsException() {
+        body.setGuildId(null);
+
+        client.post()
+                .uri(BASE_URL)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus().isBadRequest();
+
+        body.setGuildId(GUILD_ID);
+        body.setChannelId(null);
+
+        client.post()
+                .uri(BASE_URL)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
     void findByGuild_success() {
 
         client.post()
@@ -131,6 +151,16 @@ class AuditLogRegistrationTest {
                 .uri(BASE_URL+"/"+GUILD_ID)
                 .exchange()
                 .expectStatus().isNotFound();
+
+    }
+
+    @Test
+    void findByGuild_malformed_throwsException() {
+
+        client.get()
+                .uri(BASE_URL+"/notALong")
+                .exchange()
+                .expectStatus().isBadRequest();
 
     }
 
@@ -180,6 +210,26 @@ class AuditLogRegistrationTest {
     }
 
     @Test
+    void updateGuild_malformed_throwsException() {
+        body.setGuildId(null);
+
+        client.put()
+                .uri(BASE_URL)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus().isBadRequest();
+
+        body.setGuildId(GUILD_ID);
+        body.setChannelId(null);
+
+        client.put()
+                .uri(BASE_URL)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
     void deleteGuild_success() {
 
         client.post()
@@ -210,6 +260,16 @@ class AuditLogRegistrationTest {
                 .uri(BASE_URL+"/"+GUILD_ID)
                 .exchange()
                 .expectStatus().isNotFound();
+
+    }
+
+    @Test
+    void deleteGuild_malformed_throwsException() {
+
+        client.delete()
+                .uri(BASE_URL+"/notALong")
+                .exchange()
+                .expectStatus().isBadRequest();
 
     }
 }

@@ -14,7 +14,7 @@ public class MessageLogRegistrationDTO {
             example = "123456789012345678",
             requiredMode = Schema.RequiredMode.REQUIRED
     )
-    private long guildId;
+    private Long guildId;
 
     @NotNull(message = "ChannelID cannot be null")
     @Schema(
@@ -22,6 +22,6 @@ public class MessageLogRegistrationDTO {
             example = "987654321098765432",
             requiredMode = Schema.RequiredMode.REQUIRED
     )
-    private long channelId;
+    private Long channelId;
 
 }
