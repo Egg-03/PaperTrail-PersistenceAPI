@@ -9,8 +9,10 @@ A CRUD API for the PaperTrail Bot
 > Please note that this is only for advanced users who have opted for self hosting the bot and it's services
 >
 > It is recommended that you deploy this service before deploying the [bot](https://github.com/Egg-03/PaperTrailBot?tab=readme-ov-file#self-hosting-guide) itself since the bot relies on the URL of this service to communicate
+>
+> This is not a public API and should not be publicly exposed and should be accessible only by the services within the local network
 > 
-> A pre-hosted instance with it's services is already available: https://discord.com/discovery/applications/1381658412550590475
+> A pre-hosted instance with it's services pre-deployed and configured, is also available if you wish to not opt for self-deployment: https://discord.com/discovery/applications/1381658412550590475
 >
 > Just invite to your guild and configure it from there.
 
@@ -18,7 +20,9 @@ The following guide shows how to set up the API service
 
 To read the guide on deploying bot, click [here](https://github.com/Egg-03/PaperTrailBot?tab=readme-ov-file#self-hosting-guide)
 
-### Step 1: Get Required Secrets
+### Step 1: Set Up Required Services & Get Required Secrets
+
+The Persistence service relies on `Redis/Valkey` and any of the following `Database Systems`: `PostgreSQL`, `MySQL`, `Oracle`, `MS SQL Server`, `MariaDB`
 
 You will need the following environment variables to run the service:
 
@@ -53,9 +57,11 @@ Fork this repository to your GitHub account, connect it to your preferred cloud 
   docker build -t persistence-api .
   docker run --env-file .env persistence-api
   ```
+  
+#### Healthcheck Endpoint
 
-> [!IMPORTANT]
-> The API Service URL should not be publicly exposed and should be accessible only by the services within the network
+The bot exposes a /ping endpoint on port 8080.
+This endpoint simply returns 200 OK and is intended for platforms or uptime monitors to check if the bot is alive.
 
 ---
 
