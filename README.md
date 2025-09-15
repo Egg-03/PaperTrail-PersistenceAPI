@@ -10,7 +10,7 @@ A CRUD API for the PaperTrail Bot
 >
 > It is recommended that you deploy this service before deploying the [bot](https://github.com/Egg-03/PaperTrailBot?tab=readme-ov-file#self-hosting-guide) itself since the bot relies on the URL of this service to communicate
 >
-> This is not a public API and should not be publicly exposed and should be accessible only by the services within the local network
+> This is not a public API and should not be publicly exposed and should be accessible only by the services within the local network. If deploying on platforms like Northflank, Render, or Railway, ensure this service is not exposed externally and is only accessible to the bot service.
 > 
 > A pre-hosted instance with it's services pre-deployed and configured, is also available if you wish to not opt for self-deployment: https://discord.com/discovery/applications/1381658412550590475
 >
