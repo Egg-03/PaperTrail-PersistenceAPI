@@ -60,7 +60,7 @@ Fork this repository to your GitHub account, connect it to your preferred cloud 
   
 #### Healthcheck Endpoint
 
-The bot exposes an `/actuator/health` endpoint on port 8081.
+The Persistence API exposes an `/actuator/health` endpoint on port 8081.
 This endpoint simply returns 200 OK with a body and is intended for platforms or uptime monitors to check if the API Service is alive.
 
 ---
